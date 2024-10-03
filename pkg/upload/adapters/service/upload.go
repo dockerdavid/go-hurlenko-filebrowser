@@ -7,7 +7,11 @@ import (
 )
 
 func (s Service) Upload(file upload.File) (shareURL string, err error) {
-	var fileName = fmt.Sprintf("%s.%s", uuid.New().String(), file.Ext)
+	fileName := file.Filename
+
+	if fileName == "" {
+		fileName = fmt.Sprintf("%s.%s", uuid.New().String(), file.Ext)
+	}
 
 	if err = s.createEmptyFile(file, fileName); err != nil {
 		return shareURL, err

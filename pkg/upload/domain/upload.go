@@ -7,4 +7,5 @@ type File struct {
 	ShareURL string `json:"shareURL"`
 	File     []byte `json:"file"`
 	Ext      string `json:"ext"`
+	Filename string `json:"filename"`
 }
