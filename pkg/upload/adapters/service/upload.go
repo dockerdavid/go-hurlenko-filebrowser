@@ -1,25 +1,19 @@
 package upload
 
 import (
-	"fmt"
-	upload "github.com/dockerdavid/go-hurlenko-filebrowser/pkg/upload/domain"
-	"github.com/google/uuid"
+	uploadDomain "github.com/dockerdavid/go-hurlenko-filebrowser/pkg/upload/domain"
 )
 
-func (s Service) Upload(file upload.File) (shareURL string, err error) {
-	fileName := file.Filename
+func (s Service) Upload(baseData uploadDomain.BaseData, file uploadDomain.File) (shareURL string, err error) {
+	shareURL, err = s.CreateEmptyFile(baseData)
 
-	if fileName == "" {
-		fileName = fmt.Sprintf("%s.%s", uuid.New().String(), file.Ext)
-	}
-
-	if err = s.createEmptyFile(file, fileName); err != nil {
+	if err != nil {
 		return shareURL, err
 	}
 
-	if err = s.fillEmptyFile(file, fileName); err != nil {
+	if err = s.FillEmptyFile(baseData, file); err != nil {
 		return shareURL, err
 	}
 
-	return fmt.Sprintf("%s/%s/%s?inline=true", file.BaseURL, file.ShareURL, fileName), nil
+	return shareURL, nil
 }

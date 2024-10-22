@@ -3,15 +3,15 @@ package upload
 import (
 	"bytes"
 	"fmt"
-	upload "github.com/dockerdavid/go-hurlenko-filebrowser/pkg/upload/domain"
+	uploadDomain "github.com/dockerdavid/go-hurlenko-filebrowser/pkg/upload/domain"
 	"io"
 	"net/http"
 )
 
-func (s Service) fillEmptyFile(file upload.File, fileName string) error {
+func (s Service) FillEmptyFile(baseData uploadDomain.BaseData, file uploadDomain.File) error {
 	client := &http.Client{}
 
-	url := fmt.Sprintf("%s/tus/%s/%s?override=false", file.BaseURL, file.Folder, fileName)
+	url := fmt.Sprintf("%s/tus/%s/%s?override=false", baseData.BaseURL, baseData.Folder, baseData.Filename)
 
 	buf := new(bytes.Buffer)
 	_, err := io.Copy(buf, bytes.NewReader(file.File))
@@ -26,14 +26,14 @@ func (s Service) fillEmptyFile(file upload.File, fileName string) error {
 		return err
 	}
 
-	req.Header.Add("X-Auth", file.Token)
+	req.Header.Add("X-Auth", baseData.Token)
 	req.Header.Add("Content-Type", "application/offset+octet-stream")
 	req.Header.Add("Content-Length", fmt.Sprintf("%d", buf.Len()))
 	req.Header.Add("Upload-Offset", "0")
 
 	req.AddCookie(&http.Cookie{
 		Name:  "auth",
-		Value: file.Token,
+		Value: baseData.Token,
 	})
 
 	resp, err := client.Do(req)
