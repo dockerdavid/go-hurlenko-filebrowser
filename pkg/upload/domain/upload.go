@@ -11,3 +11,10 @@ type BaseData struct {
 	Filename string `json:"filename"`
 	ShareURL string `json:"shareURL"`
 }
+
+type Delete struct {
+	Token    string `json:"token"`
+	BaseURL  string `json:"baseURL"`
+	Folder   string `json:"folder"`
+	Filename string `json:"filename"`
+}
